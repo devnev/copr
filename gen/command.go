@@ -40,7 +40,7 @@ func Do(srcRoot, baseBranch, newBranch string, tracker api.Tracker) error {
 	return repo.Push(&git.PushOptions{
 		RemoteName: git.DefaultRemoteName,
 		RefSpecs: []config.RefSpec{
-			config.RefSpec(plumbing.NewBranchReferenceName("master") + ":" + plumbing.NewBranchReferenceName(branch)),
+			config.RefSpec("+" + plumbing.NewBranchReferenceName("master") + ":" + plumbing.NewBranchReferenceName(newBranch)),
 		},
 	})
 }
