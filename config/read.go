@@ -1,14 +1,14 @@
 package config
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
-	"io/ioutil"
 	"strings"
-	"bytes"
 
 	"gopkg.in/yaml.v3"
 )
@@ -20,18 +20,18 @@ func FindPath(startDir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	names := names()
 	for {
 		var found []string
-		for _, name := range names {
-			if _, err := os.Stat(filepath.Join(dir, name)); err == nil {
-				found = append(found, name)
-			} else if !os.IsNotExist(err) {
+		for _, name := range Names {
+			path := filepath.Join(dir, name)
+			if fi, err := os.Stat(path); err == nil && !fi.IsDir() {
+				found = append(found, path)
+			} else if err != nil && !os.IsNotExist(err) {
 				return "", err
 			}
 		}
 		if len(found) == 1 {
-			return filepath.Join(dir, found[0]), nil
+			return found[0], nil
 		}
 		if len(found) > 1 {
 			return "", fmt.Errorf("multiple candidates: %q", found)
@@ -84,29 +84,26 @@ func ReadDetected(r io.ReadSeeker) (config Repository, err error) {
 		return config, fmt.Errorf("unexpected empty read")
 	}
 	r.Seek(-1, io.SeekCurrent)
-	if firstByte[1] == '{' {
+	if firstByte[0] == '{' {
 		return ReadJSON(r)
 	} else {
 		return ReadYAML(r)
 	}
 }
 
-
 func names() []string {
 	var names []string
 	parts := [][]string{{"", "."}, {"copr"}, {"", ".yml", ".yaml", ".json"}}
-	iter := make([]int, len(parts))
-	for {
-		current := ""
-		for part, variant := range iter {
-			current += parts[part][variant]
+	var f func([]string)
+	f = func(iter []string) {
+		if len(iter) == len(parts) {
+			names = append(names, strings.Join(iter, ""))
+			return
 		}
-		names = append(names, current)
-		for idx := len(iter) - 1; idx >= 0; idx-- {
-			iter[idx] = (iter[idx] + 1) % len(parts[idx])
-			if iter[idx] != 0 {
-				break
-			}
+		for _, part := range parts[len(iter)] {
+			f(append(iter, part))
 		}
 	}
+	f(make([]string, 0, len(parts)))
+	return names
 }
