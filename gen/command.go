@@ -16,13 +16,13 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-func Do(srcRoot, baseBranch, newBranch string, output config.Output) error {
+func Do(srcRoot, newBranch string, output config.Output) error {
 	err := runCmd(srcRoot, output)
 	if err != nil {
 		return err
 	}
 
-	_, repo, worktree, err := makeClone(output.Repository, baseBranch)
+	_, repo, worktree, err := makeClone(output.Repository, output.BaseBranch)
 	if err != nil {
 		return err
 	}
