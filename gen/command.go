@@ -8,15 +8,15 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/devnev/copr/api"
+	"github.com/devnev/copr/config"
 	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/config"
+	gitconfig "gopkg.in/src-d/go-git.v4/config"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-func Do(srcRoot, baseBranch, newBranch string, tracker api.Tracker) error {
+func Do(srcRoot, baseBranch, newBranch string, tracker config.Tracker) error {
 	err := runCmd(srcRoot, tracker)
 	if err != nil {
 		return err
@@ -39,13 +39,13 @@ func Do(srcRoot, baseBranch, newBranch string, tracker api.Tracker) error {
 
 	return repo.Push(&git.PushOptions{
 		RemoteName: git.DefaultRemoteName,
-		RefSpecs: []config.RefSpec{
-			config.RefSpec("+" + plumbing.NewBranchReferenceName("master") + ":" + plumbing.NewBranchReferenceName(newBranch)),
+		RefSpecs: []gitconfig.RefSpec{
+			gitconfig.RefSpec("+" + plumbing.NewBranchReferenceName("master") + ":" + plumbing.NewBranchReferenceName(newBranch)),
 		},
 	})
 }
 
-func runCmd(srcRoot string, tracker api.Tracker) error {
+func runCmd(srcRoot string, tracker config.Tracker) error {
 	cmd := exec.Command(tracker.Command[0], tracker.Command[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
