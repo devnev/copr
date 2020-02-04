@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -16,8 +17,13 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-func Do(srcRoot, newBranch string, output config.Output) error {
-	err := runCmd(srcRoot, output)
+func Do(srcRoot string, output config.Output) error {
+	newBranch, err := readCmd(srcRoot, output.BranchCmd[0], output.BranchCmd[1:]...)
+	if err != nil {
+		return err
+	}
+
+	err = runCmd(srcRoot, output.Command[0], output.Command[1:]...)
 	if err != nil {
 		return err
 	}
@@ -45,8 +51,16 @@ func Do(srcRoot, newBranch string, output config.Output) error {
 	})
 }
 
-func runCmd(srcRoot string, output config.Output) error {
-	cmd := exec.Command(output.Command[0], output.Command[1:]...)
+func readCmd(dir string, name string, args ...string) (string, error) {
+	cmd := exec.Command(name, args...)
+	cmd.Stderr = os.Stderr
+	cmd.Dir = dir
+	out, err := cmd.Output()
+	return strings.TrimSpace(string(out)), err
+}
+
+func runCmd(srcRoot string, name string, args ...string) error {
+	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = srcRoot

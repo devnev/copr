@@ -7,6 +7,7 @@ type Repository struct {
 type Output struct {
 	Repository string
 	BaseBranch string
+	BranchCmd  []string
 	Command    []string
 	Directory  string
 }

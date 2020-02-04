@@ -37,8 +37,8 @@ func run() error {
 
 	log.Printf("Processing with config %+v", repoConf)
 
-	for _, t := range repoConf.Outputs {
-		err = gen.Do(filepath.Dir(path), "FIXME1", "FIXME2", t)
+	for _, out := range repoConf.Outputs {
+		err = gen.Do(filepath.Dir(path), out)
 		if err != nil {
 			return err
 		}
