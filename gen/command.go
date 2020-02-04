@@ -1,7 +1,6 @@
 package gen
 
 import (
-	"bytes"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -9,13 +8,15 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/devnev/copr/config"
 	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4"
 	gitconfig "gopkg.in/src-d/go-git.v4/config"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
+
+	"github.com/devnev/copr/config"
 )
+
 
 func Do(srcRoot string, output config.Output) error {
 	newBranch, err := readCmd(srcRoot, output.Branch[0], output.Branch[1:]...)
