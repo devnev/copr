@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/devnev/copr/gen"
+	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/devnev/copr/config"
 )
@@ -25,12 +28,21 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	log.Printf("Using config at %q", path)
 
 	repoConf, err := config.ReadPath(path)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(repoConf)
+	log.Printf("Processing with config %+v", repoConf)
+
+	for _, t := range repoConf.Trackers {
+		err = gen.Do(filepath.Dir(path), "FIXME1", "FIXME2", t)
+		if err != nil {
+			return err
+		}
+	}
+
 	return err
 }
