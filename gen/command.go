@@ -18,17 +18,17 @@ import (
 )
 
 func Do(srcRoot string, output config.Output) error {
-	newBranch, err := readCmd(srcRoot, output.BranchCmd[0], output.BranchCmd[1:]...)
+	newBranch, err := readCmd(srcRoot, output.Branch[0], output.Branch[1:]...)
 	if err != nil {
 		return err
 	}
 
-	err = runCmd(srcRoot, output.Command[0], output.Command[1:]...)
+	err = runCmd(srcRoot, output.Generate[0], output.Generate[1:]...)
 	if err != nil {
 		return err
 	}
 
-	_, repo, worktree, err := makeClone(output.Repository, output.BaseBranch)
+	_, repo, worktree, err := makeClone(output.Repository, output.Base)
 	if err != nil {
 		return err
 	}

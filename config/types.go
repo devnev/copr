@@ -6,8 +6,8 @@ type Repository struct {
 
 type Output struct {
 	Repository string
-	BaseBranch string
-	BranchCmd  []string
-	Command    []string
+	Base       string
+	Branch     []string
+	Generate   []string
 	Directory  string
 }
