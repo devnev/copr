@@ -16,18 +16,18 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-func Do(srcRoot, baseBranch, newBranch string, tracker config.Tracker) error {
-	err := runCmd(srcRoot, tracker)
+func Do(srcRoot, baseBranch, newBranch string, output config.Output) error {
+	err := runCmd(srcRoot, output)
 	if err != nil {
 		return err
 	}
 
-	_, repo, worktree, err := makeClone(tracker.Repository, baseBranch)
+	_, repo, worktree, err := makeClone(output.Repository, baseBranch)
 	if err != nil {
 		return err
 	}
 
-	err = copyOutput(filepath.Join(srcRoot, filepath.FromSlash(tracker.Output.Directory)), worktree.Filesystem.Root())
+	err = copyOutput(filepath.Join(srcRoot, filepath.FromSlash(output.Directory)), worktree.Filesystem.Root())
 	if err != nil {
 		return err
 	}
@@ -45,8 +45,8 @@ func Do(srcRoot, baseBranch, newBranch string, tracker config.Tracker) error {
 	})
 }
 
-func runCmd(srcRoot string, tracker config.Tracker) error {
-	cmd := exec.Command(tracker.Command[0], tracker.Command[1:]...)
+func runCmd(srcRoot string, output config.Output) error {
+	cmd := exec.Command(output.Command[0], output.Command[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = srcRoot

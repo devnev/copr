@@ -1,19 +1,11 @@
 package config
 
-const (
-	Filename = ".copr"
-)
-
 type Repository struct {
-	Trackers []Tracker
+	Outputs []Output
 }
 
-type Tracker struct {
+type Output struct {
 	Repository string
 	Command    []string
-	Output     OutputFormat
-}
-
-type OutputFormat struct {
 	Directory string
 }
