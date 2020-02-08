@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -17,12 +18,16 @@ import (
 	"github.com/devnev/copr/config"
 )
 
+var command = exec.Command
 
 func Do(srcRoot string, output config.Output) error {
+	output.SetDefaults()
+
 	newBranch, err := readCmd(srcRoot, output.Branch[0], output.Branch[1:]...)
 	if err != nil {
-		return err
+		return fmt.Errorf("branch command failed with %s", err)
 	}
+
 
 	err = runCmd(srcRoot, output.Generate[0], output.Generate[1:]...)
 	if err != nil {
@@ -53,7 +58,7 @@ func Do(srcRoot string, output config.Output) error {
 }
 
 func readCmd(dir string, name string, args ...string) (string, error) {
-	cmd := exec.Command(name, args...)
+	cmd := command(name, args...)
 	cmd.Stderr = os.Stderr
 	cmd.Dir = dir
 	out, err := cmd.Output()
@@ -61,7 +66,7 @@ func readCmd(dir string, name string, args ...string) (string, error) {
 }
 
 func runCmd(srcRoot string, name string, args ...string) error {
-	cmd := exec.Command(name, args...)
+	cmd := command(name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = srcRoot
