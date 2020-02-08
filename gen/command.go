@@ -47,7 +47,7 @@ func Do(srcRoot string, output config.Output) error {
 	return repo.Push(&git.PushOptions{
 		RemoteName: git.DefaultRemoteName,
 		RefSpecs: []gitconfig.RefSpec{
-			gitconfig.RefSpec("+" + plumbing.NewBranchReferenceName("master") + ":" + plumbing.NewBranchReferenceName(newBranch)),
+			gitconfig.RefSpec("+" + plumbing.NewBranchReferenceName(output.Base) + ":" + plumbing.NewBranchReferenceName(newBranch)),
 		},
 	})
 }
