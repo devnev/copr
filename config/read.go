@@ -66,13 +66,17 @@ func ReadPath(path string) (conf Repository, err error) {
 func ReadYAML(r io.Reader) (config Repository, err error) {
 	dec := yaml.NewDecoder(r)
 	dec.KnownFields(true)
-	return config, dec.Decode(&config)
+	err = dec.Decode(&config)
+	config.SetDefaults()
+	return config, err
 }
 
 func ReadJSON(r io.Reader) (config Repository, err error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
-	return config, dec.Decode(&config)
+	err = dec.Decode(&config)
+	config.SetDefaults()
+	return config, err
 }
 
 func ReadDetected(r io.ReadSeeker) (config Repository, err error) {
